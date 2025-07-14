@@ -16,20 +16,33 @@ const checkout = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// const confirmPayment = catchAsync(async (req: Request, res: Response) => {
+//   console.log('req.query', req?.query);
+//   const results = await paymentsService.confirmPayment(req?.query);
+//   // res.redirect(`${config.success_url}?subscriptionId=${results?.subscription}&paymentId=${results?._id}`);
+// console.log('req.query.paymentId', req?.query);
+//   const result = await paymentsService.generateInvoice(req?.query.paymentId);
+//   console.log('---------------',result);
+//   sendResponse(res, {
+//     success: true,
+//     statusCode: httpStatus.OK,
+//     data: result,
+//     message: 'Payment retrieved successfully',
+//   });
+// });
+
+
+
 const confirmPayment = catchAsync(async (req: Request, res: Response) => {
   console.log('req.query', req?.query);
   const results = await paymentsService.confirmPayment(req?.query);
-  // res.redirect(`${config.success_url}?subscriptionId=${results?.subscription}&paymentId=${results?._id}`);
-console.log('req.query.paymentId', req?.query);
   const result = await paymentsService.generateInvoice(req?.query.paymentId);
   console.log('---------------',result);
-  sendResponse(res, {
-    success: true,
-    statusCode: httpStatus.OK,
-    data: result,
-    message: 'Payment retrieved successfully',
-  });
+  res.redirect(`http://10.10.10.9:7001/payment/success/`);
 });
+
+
+
 
 const dashboardData = catchAsync(async (req: Request, res: Response) => {
   const result = await paymentsService.dashboardData(req?.query);
