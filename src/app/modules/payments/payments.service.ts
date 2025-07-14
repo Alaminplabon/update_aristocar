@@ -122,11 +122,17 @@ const confirmPayment = async (query: Record<string, any>) => {
   let originalSubscription: any;
   try {
     // Step 1: Save the original state
-    const payment = await Payment.findById(paymentId).populate('user');
+    payment = await Payment.findById(paymentId).populate('user');
+
+    if (!payment) {
+      throw new AppError(httpStatus.NOT_FOUND, 'Payment Not Found!');
+    }
+    payment.isPaid = true;
+    await payment.save();
     //@ts-ignore
     originalPayment = { ...payment.toObject() }; // Store original payment state
 
-    console.log('payment', payment);
+    console.log('payment=================', payment);
 
     if (!payment) {
       throw new AppError(httpStatus.NOT_FOUND, 'Payment Not Found!');
@@ -605,17 +611,14 @@ const getEarnings = async () => {
   ]);
 
   const totalEarnings =
-    (totalEarningsData?.length > 0 &&
-      totalEarningsData[0]?.total.toFixed(2)) ||
+    (totalEarningsData?.length > 0 && totalEarningsData[0]?.total.toFixed(2)) ||
     0;
   const todayEarnings =
-    (todayEarningsData?.length > 0 &&
-      todayEarningsData[0]?.total.toFixed(2)) ||
+    (todayEarningsData?.length > 0 && todayEarningsData[0]?.total.toFixed(2)) ||
     0;
 
   return { totalEarnings, todayEarnings, allData };
 };
-
 
 // const dashboardData = async (query: Record<string, any>) => {
 //   const usersData = await User.aggregate([
@@ -908,7 +911,9 @@ const dashboardData = async (query: Record<string, any>) => {
 
   // Total counts by role
   const totalCustomer = await User.countDocuments({ role: USER_ROLE.user });
-  const totalServiceProvider = await User.countDocuments({ role: USER_ROLE.dealer });
+  const totalServiceProvider = await User.countDocuments({
+    role: USER_ROLE.dealer,
+  });
 
   // Monthly income
   const monthlyIncome = await Payment.aggregate([
@@ -936,7 +941,9 @@ const dashboardData = async (query: Record<string, any>) => {
   }));
 
   monthlyIncome.forEach(entry => {
-    formattedMonthlyIncome[entry._id.month - 1].income = Math.round(entry.income);
+    formattedMonthlyIncome[entry._id.month - 1].income = Math.round(
+      entry.income,
+    );
   });
 
   // Monthly active user registration
@@ -980,8 +987,6 @@ const dashboardData = async (query: Record<string, any>) => {
   };
 };
 
-
-
 const getAllPayments = async (year: string, month: string) => {
   // Ensure that year and month are valid numbers
   const parsedYear = Number(year);
@@ -1018,7 +1023,7 @@ const getPaymentsByUserId = async (
   query: Record<string, any>,
 ) => {
   const paymentQueryBuilder = new QueryBuilder(
-    Payment.find({ user: userId})
+    Payment.find({ user: userId })
       .populate({
         path: 'subscription',
         populate: { path: 'package' },
