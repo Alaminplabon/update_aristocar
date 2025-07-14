@@ -1018,7 +1018,7 @@ const getPaymentsByUserId = async (
   query: Record<string, any>,
 ) => {
   const paymentQueryBuilder = new QueryBuilder(
-    Payment.find({ user: userId, isPaid: true })
+    Payment.find({ user: userId})
       .populate({
         path: 'subscription',
         populate: { path: 'package' },
