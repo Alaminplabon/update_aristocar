@@ -38,6 +38,23 @@ const checkout = async (payload: IPayment) => {
     throw new AppError(httpStatus.NOT_FOUND, 'Subscription Not Found!');
   }
 
+  const user = await User.findById(payload?.user);
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
+  }
+
+  // Check if user has remaining duration
+  const hasRemainingDays = (user.durationDay || 0) > 0;
+  let amount = subscription.amount;
+  let discount = 0;
+
+  // Apply discount if user has remaining durationDay
+  if (hasRemainingDays && user.totalPackagePrice) {
+    discount = user.totalPackagePrice;
+    amount = Math.max(0, amount - discount); // Ensure not negative
+  }
+  
+
   // Check for existing unpaid payment for the subscription
   const isExistPayment: IPayment | null = await Payment.findOne({
     subscription: payload?.subscription,
@@ -45,8 +62,8 @@ const checkout = async (payload: IPayment) => {
     user: payload?.user,
   });
 
-  const user = await User.findById(payload?.user); // Assuming you have a User model
-  let amount = subscription?.amount;
+  // const user = await User.findById(payload?.user); // Assuming you have a User model
+  // let amount = subscription?.amount;
   let vat = 0;
   let vatParcentage = 0;
   console.log('vat type', user?.vat_type);
@@ -195,10 +212,11 @@ const confirmPayment = async (query: Record<string, any>) => {
 
     const packageDetails = subscription?.package as IPackage;
     if (packageDetails) {
-      const { carCreateLimit, durationDay } = packageDetails;
+      const { carCreateLimit, durationDay,price } = packageDetails;
 
       user.carCreateLimit = (user.carCreateLimit || 0) + (carCreateLimit || 0);
       user.durationDay = (user.durationDay || 0) + (durationDay || 0);
+      user.totalPackagePrice = (user.totalPackagePrice || 0) + (price || 0);
 
       await user.save();
     }

@@ -136,6 +136,10 @@ const userSchema: Schema<IUser> = new Schema(
     durationDay: {
       type: Number,
     },
+    totalPackagePrice: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

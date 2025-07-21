@@ -43,6 +43,7 @@ export interface IUser {
   invoice_type: string;
   carCreateLimit: number;
   durationDay: number;
+  totalPackagePrice: number;
 }
 
 export interface UserModel extends Model<IUser> {
