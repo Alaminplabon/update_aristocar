@@ -32,6 +32,7 @@ export interface IUser {
   passwordChangedAt?: Date;
   isDeleted: boolean;
   isApproved: boolean;
+  packageId: Types.ObjectId;
 
   verification: {
     otp: string | number;

@@ -140,6 +140,10 @@ const userSchema: Schema<IUser> = new Schema(
       type: Number,
       default: 0,
     },
+    packageId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Package',
+    }
   },
   {
     timestamps: true,
