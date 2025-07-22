@@ -8,7 +8,7 @@ import httpStatus from 'http-status';
 import Payment from './payments.models';
 import { User } from '../user/user.models';
 import { createCheckoutSession } from './payments.utils';
-import { now, startSession } from 'mongoose';
+import mongoose, { now, startSession } from 'mongoose';
 import { IPackage } from '../packages/packages.interface';
 import { notificationServices } from '../notification/notification.service';
 import { modeType } from '../notification/notification.interface';
@@ -217,6 +217,7 @@ const confirmPayment = async (query: Record<string, any>) => {
       user.carCreateLimit = (user.carCreateLimit || 0) + (carCreateLimit || 0);
       user.durationDay = (user.durationDay || 0) + (durationDay || 0);
       user.totalPackagePrice = (user.totalPackagePrice || 0) + (price || 0);
+      user.packageId = new mongoose.Types.ObjectId(packageDetails._id);
 
       await user.save();
     }

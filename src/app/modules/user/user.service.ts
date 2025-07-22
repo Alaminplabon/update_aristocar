@@ -180,7 +180,7 @@ const getAllUserByYearandmonth = async (year: string) => {
 };
 
 const geUserById = async (id: string) => {
-  const result = await User.findById(id);
+  const result = await User.findById(id).populate('packageId');
   return result;
 };
 
