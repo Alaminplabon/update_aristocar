@@ -74,6 +74,9 @@ const checkout = async (payload: IPayment) => {
     vat = totalVat;
     vatParcentage = vatRate;
   }
+  
+  user.totalDiscountPrice = amount;
+  await user.save();
 
   if (isExistPayment) {
     const payment = await Payment.findByIdAndUpdate(

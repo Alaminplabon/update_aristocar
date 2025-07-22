@@ -45,6 +45,7 @@ export interface IUser {
   carCreateLimit: number;
   durationDay: number;
   totalPackagePrice: number;
+  totalDiscountPrice : number;
 }
 
 export interface UserModel extends Model<IUser> {

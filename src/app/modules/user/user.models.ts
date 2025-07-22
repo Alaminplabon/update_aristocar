@@ -143,6 +143,10 @@ const userSchema: Schema<IUser> = new Schema(
     packageId: {
       type: Schema.Types.ObjectId,
       ref: 'Package',
+    },
+    totalDiscountPrice: {
+      type: Number,
+      default: 0,
     }
   },
   {
