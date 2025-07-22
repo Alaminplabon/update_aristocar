@@ -117,6 +117,9 @@ const checkout = async (payload: IPayment) => {
     //@ts-ignore
     paymentId: paymentData?._id,
   });
+  
+  user.totalDiscountPrice = amount;
+  await user.save();
 
   return checkoutSession?.url;
 };
